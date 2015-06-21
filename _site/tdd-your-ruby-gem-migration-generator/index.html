@@ -6,7 +6,9 @@
 <head>
 <meta charset="utf-8">
 <title>TDD your ruby gem a migration generator &#8211; crftr.com</title>
-<meta name="description" content="I maintain a ruby gem that was without a database migration generator for far too long. This is how I TDD‘d a generator to create its database migration generator.
+<meta name="description" content="I maintain a ruby gem that was without a database migration generator for
+far too long. This is a walkthrough on how I TDD‘d a generator to create
+its database migration generator.
 
 ">
 <meta name="keywords" content="tutorial, ruby, gems, tdd">
@@ -15,7 +17,9 @@
 
 <!-- Twitter Cards -->
 <meta name="twitter:title" content="TDD your ruby gem a migration generator">
-<meta name="twitter:description" content="I maintain a ruby gem that was without a database migration generator for far too long. This is how I TDD‘d a generator to create its database migration generator.
+<meta name="twitter:description" content="I maintain a ruby gem that was without a database migration generator for
+far too long. This is a walkthrough on how I TDD‘d a generator to create
+its database migration generator.
 
 ">
 <meta name="twitter:site" content="@crftr">
@@ -28,7 +32,9 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TDD your ruby gem a migration generator">
-<meta property="og:description" content="I maintain a ruby gem that was without a database migration generator for far too long. This is how I TDD‘d a generator to create its database migration generator.
+<meta property="og:description" content="I maintain a ruby gem that was without a database migration generator for
+far too long. This is a walkthrough on how I TDD‘d a generator to create
+its database migration generator.
 
 ">
 <meta property="og:url" content="/tdd-your-ruby-gem-migration-generator/">
@@ -118,12 +124,12 @@
 <div itemscope itemtype="http://schema.org/Person">
 
 
-	<img src="/images/bio-photo.jpg" class="bio-photo" alt="Mike Herrera bio photo">
+	<img src="/images/crftr.png" class="bio-photo" alt="Mike Herrera bio photo">
 
 
   <h3 itemprop="name">Mike Herrera</h3>
-  <p>Bassist, surfer, developer. More metal than your momma's kettle.</p>
-  
+  <p>Bassist, surfer, engineer. More metal than your momma's kettle.</p>
+  <a href="mailto:michael.herrera@gmail.com" class="author-social" target="_blank"><i class="fa fa-fw fa-envelope-square"></i> Email</a>
   <a href="http://twitter.com/crftr" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
   
   
@@ -152,22 +158,26 @@
       
     </div><!--/ .headline-wrap -->
     <div class="article-wrap">
-      <p>I maintain <a href="http://github.com/crftr/double_double">a ruby gem</a> that was without a database migration generator for far too long. This is how I <a href="https://en.wikipedia.org/wiki/Test-driven_development">TDD</a>‘d a generator to create its database migration generator.</p>
+      <p>I maintain <a href="http://github.com/crftr/double_double">a ruby gem</a> that was without a database migration generator for
+far too long. This is a walkthrough on how I <a href="https://en.wikipedia.org/wiki/Test-driven_development">TDD</a>‘d a generator to create
+its database migration generator.</p>
 
 <h2 id="whats-a-migration-generator">What’s a migration generator?</h2>
 
-<p><em>The migration generator is a combination of two unique tools.</em></p>
+<p>A migration generator is a composition of Rails generators and
+ActiveRecord migrations.  They are commonly found in Rails engines and plugins.</p>
 
-<p><a href="http://guides.rubyonrails.org/generators.html">Rails generators</a> are convenience scripts. Most frequently generators are used to insert boilerplate code into an application.</p>
+<p><a href="http://guides.rubyonrails.org/generators.html">Rails generators</a> are convenience scripts. Most frequently generators are
+used to insert boilerplate code into an application.</p>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Example Rails generator</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># An example Rails generator that will</span>
+<span class="c"># generate a new UsersController</span>
 
-<span class="c"># This will generate a new UsersController</span>
 <span class="nv">$ </span>rails generate controller User</code></pre></div>
 
 <p><a href="http://guides.rubyonrails.org/active_record_migrations.html">ActiveRecord migrations</a> are Ruby classes that define a version of the
-application’s database. Where each additional database migration only needs
-to define how to incrementally modify the database from the previous version.</p>
+application’s database. Where each additional database migration only defines
+how to incrementally modify the database from the previous version.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Example database migrations</span>
 
@@ -224,20 +234,6 @@ to define how to incrementally modify the database from the previous version.</p
 </div><!-- /#main -->
 
 <div class="footer-wrap">
-  
-  <div class="related-articles">
-  <h4>You might also enjoy <small class="pull-right">(<a href="/posts/">View all posts</a>)</small></h4>
-    <ul>
-    
-      <li><a href="/author-override/" title="Author Override">Author Override</a></li>
-    
-      <li><a href="/code-highlighting-post/" title="Syntax Highlighting Post">Syntax Highlighting Post</a></li>
-    
-      <li><a href="/sample-link-post/" title="Sample Link Post">Sample Link Post</a></li>
-    
-    </ul>
-    <hr />
-  </div><!-- /.related-articles -->
   
   <footer>
     

@@ -7,28 +7,38 @@ comments: true
 date: 2015-06-19T16:13:19-07:00
 ---
 
-I maintain [a ruby gem][1] that was without a database migration generator for far too long. This is how I [TDD][2]'d a generator to create its database migration generator.
+I maintain [a ruby gem][1] that was without a database migration generator for
+far too long. This is a walkthrough on how I [TDD][2]'d a generator to create
+its database migration generator.
+
 
 
 ## What's a migration generator?
 
-*The migration generator is a combination of two unique tools.*
 
-[Rails generators][3] are convenience scripts. Most frequently generators are used to insert boilerplate code into an application.  
+
+A migration generator is a composition of Rails generators and
+ActiveRecord migrations.  They are commonly found in Rails engines and plugins.
+
+
+
+[Rails generators][3] are convenience scripts. Most frequently generators are
+used to insert boilerplate code into an application.  
 
 {% highlight bash %}
 
-# Example Rails generator
+# An example Rails generator that will
+# generate a new UsersController
 
-# This will generate a new UsersController
 $ rails generate controller User
 
 {% endhighlight %}
 
 
+
 [ActiveRecord migrations][4] are Ruby classes that define a version of the
-application's database. Where each additional database migration only needs
-to define how to incrementally modify the database from the previous version.
+application's database. Where each additional database migration only defines
+how to incrementally modify the database from the previous version.
 
 {% highlight bash %}
 
@@ -41,6 +51,8 @@ $ rails generate devise:install
 # my double-entry accounting gem
 $ rails generate double_double:install
 {% endhighlight %}
+
+
 
 
 
