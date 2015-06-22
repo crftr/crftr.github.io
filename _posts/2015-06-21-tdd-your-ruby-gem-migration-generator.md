@@ -11,6 +11,8 @@ I maintain [a ruby gem][1] that was without a database migration generator for
 far too long. This is a walkthrough on how I [TDD][2]'d a generator to create
 its database migration generator.
 
+Our end goal is to create the database migration install action for `rails generate double_double:install`
+
 
 
 ## What's a migration generator?
@@ -206,7 +208,7 @@ module DoubleDouble
       desc "Add the migrations for DoubleDouble"
 
       def self.next_migration_number(path)
-        next_migration_number = current_migration_number(dirname) + 1
+        next_migration_number = current_migration_number(path) + 1
         ActiveRecord::Migration.next_migration_number(next_migration_number)
       end
 
@@ -222,7 +224,8 @@ end
 
 You may be asking: What's the class method `next_migration_number`?
 
-It adds the date and time string to the migration filename. [I found that exact method implementation in Rails][6], itself.
+It determines the date and time string that will be prepended on the migration
+filename. [I found that exact method implementation in Rails][6], itself.
 
 
 

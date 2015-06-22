@@ -4,7 +4,7 @@
 <generator uri="https://github.com/jekyll/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="/feed.xml" />
 <link rel="alternate" type="text/html" href="" />
-<updated>2015-06-21T20:19:49-07:00</updated>
+<updated>2015-06-22T06:00:07-07:00</updated>
 <id>/</id>
 <author>
   <name>Mike Herrera</name>
@@ -31,6 +31,8 @@
     &lt;p&gt;I maintain &lt;a href=&quot;http://github.com/crftr/double_double&quot;&gt;a ruby gem&lt;/a&gt; that was without a database migration generator for
 far too long. This is a walkthrough on how I &lt;a href=&quot;https://en.wikipedia.org/wiki/Test-driven_development&quot;&gt;TDD&lt;/a&gt;‘d a generator to create
 its database migration generator.&lt;/p&gt;
+
+&lt;p&gt;Our end goal is to create the database migration install action for &lt;code&gt;rails generate double_double:install&lt;/code&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;whats-a-migration-generator&quot;&gt;What’s a migration generator?&lt;/h2&gt;
 
@@ -175,7 +177,7 @@ the generated files and directories.  The &lt;code&gt;tmp&lt;/code&gt; directory
       &lt;span class=&quot;n&quot;&gt;desc&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Add the migrations for DoubleDouble&amp;quot;&lt;/span&gt;
 
       &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;next_migration_number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;next_migration_number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_migration_number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;next_migration_number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_migration_number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
         &lt;span class=&quot;no&quot;&gt;ActiveRecord&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Migration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;next_migration_number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;next_migration_number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
       &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 
@@ -189,7 +191,8 @@ the generated files and directories.  The &lt;code&gt;tmp&lt;/code&gt; directory
 
 &lt;p&gt;You may be asking: What’s the class method &lt;code&gt;next_migration_number&lt;/code&gt;?&lt;/p&gt;
 
-&lt;p&gt;It adds the date and time string to the migration filename. &lt;a href=&quot;https://github.com/rails/rails/blob/3e36db4406beea32772b1db1e9a16cc1e8aea14c/activerecord/lib/rails/generators/active_record/migration.rb&quot;&gt;I found that exact method implementation in Rails&lt;/a&gt;, itself.&lt;/p&gt;
+&lt;p&gt;It determines the date and time string that will be prepended on the migration
+filename. &lt;a href=&quot;https://github.com/rails/rails/blob/3e36db4406beea32772b1db1e9a16cc1e8aea14c/activerecord/lib/rails/generators/active_record/migration.rb&quot;&gt;I found that exact method implementation in Rails&lt;/a&gt;, itself.&lt;/p&gt;
 
 
     &lt;p&gt;&lt;a href=&quot;/tdd-your-ruby-gem-migration-generator/&quot;&gt;TDD your ruby gem a migration generator&lt;/a&gt; was originally published by Mike Herrera at &lt;a href=&quot;&quot;&gt;crftr.com&lt;/a&gt; on June 21, 2015.&lt;/p&gt;

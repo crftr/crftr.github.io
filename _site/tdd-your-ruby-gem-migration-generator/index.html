@@ -162,6 +162,8 @@ its database migration generator.
 far too long. This is a walkthrough on how I <a href="https://en.wikipedia.org/wiki/Test-driven_development">TDD</a>‘d a generator to create
 its database migration generator.</p>
 
+<p>Our end goal is to create the database migration install action for <code>rails generate double_double:install</code></p>
+
 <h2 id="whats-a-migration-generator">What’s a migration generator?</h2>
 
 <p>A migration generator is the composition of ActiveRecord migrations within
@@ -305,7 +307,7 @@ the generated files and directories.  The <code>tmp</code> directory is an obvio
       <span class="n">desc</span> <span class="s2">&quot;Add the migrations for DoubleDouble&quot;</span>
 
       <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">next_migration_number</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">next_migration_number</span> <span class="o">=</span> <span class="n">current_migration_number</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">next_migration_number</span> <span class="o">=</span> <span class="n">current_migration_number</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="o">.</span><span class="n">next_migration_number</span><span class="p">(</span><span class="n">next_migration_number</span><span class="p">)</span>
       <span class="k">end</span>
 
@@ -319,7 +321,8 @@ the generated files and directories.  The <code>tmp</code> directory is an obvio
 
 <p>You may be asking: What’s the class method <code>next_migration_number</code>?</p>
 
-<p>It adds the date and time string to the migration filename. <a href="https://github.com/rails/rails/blob/3e36db4406beea32772b1db1e9a16cc1e8aea14c/activerecord/lib/rails/generators/active_record/migration.rb">I found that exact method implementation in Rails</a>, itself.</p>
+<p>It determines the date and time string that will be prepended on the migration
+filename. <a href="https://github.com/rails/rails/blob/3e36db4406beea32772b1db1e9a16cc1e8aea14c/activerecord/lib/rails/generators/active_record/migration.rb">I found that exact method implementation in Rails</a>, itself.</p>
 
 
       <hr />
