@@ -164,48 +164,162 @@ its database migration generator.</p>
 
 <h2 id="whats-a-migration-generator">What’s a migration generator?</h2>
 
-<p>A migration generator is a composition of Rails generators and
-ActiveRecord migrations.  They are commonly found in Rails engines and plugins.</p>
+<p>A migration generator is the composition of ActiveRecord migrations within
+Rails generators.  They are commonly found in Rails engines and plugins.</p>
 
 <p><a href="http://guides.rubyonrails.org/generators.html">Rails generators</a> are convenience scripts. Most frequently generators are
-used to insert boilerplate code into an application.</p>
+used to create or insert boilerplate code into an application.</p>
 
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># An example Rails generator that will</span>
 <span class="c"># generate a new UsersController</span>
-
+<span class="c">#</span>
 <span class="nv">$ </span>rails generate controller User</code></pre></div>
 
 <p><a href="http://guides.rubyonrails.org/active_record_migrations.html">ActiveRecord migrations</a> are Ruby classes that define a version of the
 application’s database. Where each additional database migration only defines
 how to incrementally modify the database from the previous version.</p>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Example database migrations</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Example database migrations to add a column to an existing model</span>
+<span class="c">#</span>
+<span class="nv">$ </span>rails generate migration add_email_to_users email:string</code></pre></div>
 
-<span class="c"># Bootstrap and generate the configuration to integrate Devise</span>
-<span class="nv">$ </span>rails generate devise:install
+<p>Now if we were to combine both of these concepts we arrive at migration
+generators. Which are generators that are capable of creating database migrations.</p>
 
-<span class="c"># Creates a database migration to support</span>
-<span class="c"># my double-entry accounting gem</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Devise will create a database migration for the Users table</span>
+<span class="c">#</span>
+<span class="nv">$ </span>rails generate devise User
+
+<span class="c"># Creates a database migration to support my</span>
+<span class="c"># double-entry accounting gem</span>
+<span class="c">#</span>
 <span class="nv">$ </span>rails generate double_double:install</code></pre></div>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># Example can be run directly in your JavaScript console</span>
-<span class="k">def</span> <span class="nf">new_for_sure</span>
-  <span class="n">newbie</span> <span class="o">=</span> <span class="mi">1</span>
-  <span class="n">newbie</span> <span class="o">+=</span> <span class="mi">2</span>
+<h3 id="tdd-approach">TDD approach</h3>
+
+<p>For the purpose of this generator, I am most concerned that the database
+migration template is copied into the expected location.</p>
+
+<p><em>We could further inspect the generated migration for its specific content,
+but that’s approaching overkill.  As other tests utilize the database, those
+tests will certainly fail loudly if there is a problem with our migration.</em></p>
+
+<p>To assist in our tests we will be using the <a href="https://github.com/stevehodgkiss/generator_spec">generator_spec</a> gem.  Let’s
+add it to our <code>.gemspec</code>.  Bundle install.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># double_double.gemspec</span>
+
+<span class="no">Gem</span><span class="o">::</span><span class="no">Specification</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">gem</span><span class="o">|</span>
+  <span class="c1"># ...</span>
+  <span class="n">gem</span><span class="o">.</span><span class="n">add_development_dependency</span> <span class="s1">&#39;generator_spec&#39;</span>
 <span class="k">end</span></code></pre></div>
 
-<p>Cum sociis natoque penatibus et magnis dis <code>code element</code> montes, nascetur ridiculus mus.</p>
+<h3 id="our-test">Our test</h3>
 
-<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Example can be run directly in your JavaScript console</span>
+<p>The skeleton of our Rspec spec:</p>
 
-<span class="c1">// Create a function that takes two arguments and returns the sum of those arguments</span>
-<span class="kd">var</span> <span class="nx">adder</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Function</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;return a + b&quot;</span><span class="p">);</span>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># spec/lib/generators/double_double/install/install_generator_spec.rb</span>
 
-<span class="c1">// Call the function</span>
-<span class="nx">adder</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">);</span>
-<span class="c1">// &gt; 8</span></code></pre></div>
+<span class="nb">require</span> <span class="s2">&quot;generator_spec&quot;</span>
 
-<p>Aenean lacinia bibendum nulla sed consectetur. Etiam porta sem malesuada magna mollis euismod. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa.</p>
+<span class="k">module</span> <span class="nn">DoubleDouble</span>
+  <span class="k">module</span> <span class="nn">Generators</span>
+    <span class="n">describe</span> <span class="no">InstallGenerator</span><span class="p">,</span> <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="ss">:generator</span> <span class="k">do</span>
+
+      <span class="n">root_dir</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;../../../../../../tmp&quot;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+      <span class="n">destination</span> <span class="n">root_dir</span>
+
+      <span class="n">before</span> <span class="ss">:all</span> <span class="k">do</span>
+        <span class="n">prepare_destination</span>
+        <span class="n">run_generator</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>Our most significant decision so far was deciding where to temporarily store
+the generated files and directories.  The <code>tmp</code> directory is an obvious choice.</p>
+
+<p>Let’s continue and add our test case.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># spec/lib/generators/double_double/install/install_generator_spec.rb</span>
+
+<span class="nb">require</span> <span class="s2">&quot;generator_spec&quot;</span>
+
+<span class="k">module</span> <span class="nn">DoubleDouble</span>
+  <span class="k">module</span> <span class="nn">Generators</span>
+    <span class="n">describe</span> <span class="no">InstallGenerator</span><span class="p">,</span> <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="ss">:generator</span> <span class="k">do</span>
+
+      <span class="n">root_dir</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;../../../../../../tmp&quot;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+      <span class="n">destination</span> <span class="n">root_dir</span>
+
+      <span class="n">before</span> <span class="ss">:all</span> <span class="k">do</span>
+        <span class="n">prepare_destination</span>
+        <span class="n">run_generator</span>
+      <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">&quot;creates the installation db migration&quot;</span> <span class="k">do</span>
+        <span class="n">migration_file</span> <span class="o">=</span> 
+          <span class="no">Dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">root_dir</span><span class="si">}</span><span class="s2">/db/migrate/*create_double_double.rb&quot;</span><span class="p">)</span>
+
+        <span class="n">assert_file</span> <span class="n">migration_file</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">,</span> 
+          <span class="sr">/class CreateDoubleDouble &lt; ActiveRecord::Migration/</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p><strong>Now</strong> we have a test to code against.  This test will assert:</p>
+
+<ul>
+  <li>That the migration exists</li>
+  <li>That some text in the migration is the classname that we expect</li>
+</ul>
+
+<h3 id="production-code">Production code</h3>
+
+<p><em>Fast-forward some TDD and a few cups of coffee…</em></p>
+
+<p>We wrote a proper database migration template.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># lib/generators/double_double/install/templates/create_double_double.rb</span>
+
+<span class="k">class</span> <span class="nc">CreateDoubleDouble</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+  <span class="k">def</span> <span class="nf">change</span>
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>And to finish the task we added the actual Rails generator.</p>
+
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># lib/generators/double_double/install/install_generator.rb</span>
+
+<span class="nb">require</span> <span class="s1">&#39;rails/generators&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;rails/generators/migration&#39;</span>
+
+<span class="k">module</span> <span class="nn">DoubleDouble</span>
+  <span class="k">module</span> <span class="nn">Generators</span>
+    <span class="k">class</span> <span class="nc">InstallGenerator</span> <span class="o">&lt;</span> <span class="o">::</span><span class="no">Rails</span><span class="o">::</span><span class="no">Generators</span><span class="o">::</span><span class="no">Base</span>
+      <span class="kp">include</span> <span class="no">Rails</span><span class="o">::</span><span class="no">Generators</span><span class="o">::</span><span class="no">Migration</span>
+      <span class="n">source_root</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../templates&#39;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+      <span class="n">desc</span> <span class="s2">&quot;Add the migrations for DoubleDouble&quot;</span>
+
+      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">next_migration_number</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">next_migration_number</span> <span class="o">=</span> <span class="n">current_migration_number</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="o">.</span><span class="n">next_migration_number</span><span class="p">(</span><span class="n">next_migration_number</span><span class="p">)</span>
+      <span class="k">end</span>
+
+      <span class="k">def</span> <span class="nf">copy_migrations</span>
+        <span class="n">migration_template</span> <span class="s2">&quot;create_double_double.rb&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;db/migrate/create_double_double.rb&quot;</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+
+<p>You may be asking: What’s the class method <code>next_migration_number</code>?</p>
+
+<p>It adds the date and time string to the migration filename. <a href="https://github.com/rails/rails/blob/3e36db4406beea32772b1db1e9a16cc1e8aea14c/activerecord/lib/rails/generators/active_record/migration.rb">I found that exact method implementation in Rails</a>, itself.</p>
 
 
       <hr />
@@ -224,7 +338,7 @@ how to incrementally modify the database from the previous version.</p>
     </li>
   </ul>
 </div><!-- /.social-share -->
-        <p class="byline"><strong>TDD your ruby gem a migration generator</strong> was published on <time datetime="2015-06-19T16:13:19-07:00">June 19, 2015</time> and last modified on <time datetime="2015-06-19">June 19, 2015</time>.</p>
+        <p class="byline"><strong>TDD your ruby gem a migration generator</strong> was published on <time datetime="2015-06-21T10:13:19-07:00">June 21, 2015</time> and last modified on <time datetime="2015-06-21">June 21, 2015</time>.</p>
       </footer>
     </div><!-- /.article-wrap -->
   
