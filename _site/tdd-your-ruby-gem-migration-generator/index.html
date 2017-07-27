@@ -14,7 +14,6 @@ its database migration generator.
 <meta name="keywords" content="tutorial, ruby, gems, tdd">
 
 
-
 <!-- Twitter Cards -->
 <meta name="twitter:title" content="TDD your ruby gem a migration generator">
 <meta name="twitter:description" content="I maintain a ruby gem that was without a database migration generator for
@@ -100,12 +99,8 @@ its database migration generator.
 		    <ul>
 		        
 				    
-				        
-				    
 				    <li><a href="http://crftr.com/about/" >About</a></li>
 				
-				    
-				        
 				    
 				    <li><a href="http://crftr.com/posts/" >Posts</a></li>
 				
@@ -119,7 +114,6 @@ its database migration generator.
 <div id="main" role="main">
   <div class="article-author-side">
     
-
 
 <div itemscope itemtype="http://schema.org/Person">
 
@@ -162,7 +156,7 @@ its database migration generator.
 far too long. This is a walkthrough on how I <a href="https://en.wikipedia.org/wiki/Test-driven_development">TDD</a>‘d a generator to create
 its database migration generator.</p>
 
-<p>Our end goal is to create the database migration install action for <code>rails generate double_double:install</code></p>
+<p>Our end goal is to create the database migration install action for <code class="highlighter-rouge">rails generate double_double:install</code></p>
 
 <h2 id="whats-a-migration-generator">What’s a migration generator?</h2>
 
@@ -172,30 +166,30 @@ Rails generators.  They are commonly found in Rails engines and plugins.</p>
 <p><a href="http://guides.rubyonrails.org/generators.html">Rails generators</a> are convenience scripts. Most frequently generators are
 used to create or insert boilerplate code into an application.</p>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># An example Rails generator that will</span>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># An example Rails generator that will</span>
 <span class="c"># generate a new UsersController</span>
 <span class="c">#</span>
-<span class="nv">$ </span>rails generate controller User</code></pre></div>
+<span class="gp">$ </span>rails generate controller User</code></pre></figure>
 
 <p><a href="http://guides.rubyonrails.org/active_record_migrations.html">ActiveRecord migrations</a> are Ruby classes that define a version of the
 application’s database. Where each additional database migration only defines
 how to incrementally modify the database from the previous version.</p>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Example database migrations to add a column to an existing model</span>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Example database migrations to add a column to an existing model</span>
 <span class="c">#</span>
-<span class="nv">$ </span>rails generate migration add_email_to_users email:string</code></pre></div>
+<span class="gp">$ </span>rails generate migration add_email_to_users email:string</code></pre></figure>
 
 <p>Now if we were to combine both of these concepts we arrive at migration
 generators. Which are generators that are capable of creating database migrations.</p>
 
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Devise will create a database migration for the Users table</span>
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Devise will create a database migration for the Users table</span>
 <span class="c">#</span>
-<span class="nv">$ </span>rails generate devise User
+<span class="gp">$ </span>rails generate devise User
 
 <span class="c"># Creates a database migration to support my</span>
 <span class="c"># double-entry accounting gem</span>
 <span class="c">#</span>
-<span class="nv">$ </span>rails generate double_double:install</code></pre></div>
+<span class="gp">$ </span>rails generate double_double:install</code></pre></figure>
 
 <h3 id="tdd-approach">TDD approach</h3>
 
@@ -207,28 +201,28 @@ but that’s approaching overkill.  As other tests utilize the database, those
 tests will certainly fail loudly if there is a problem with our migration.</em></p>
 
 <p>To assist in our tests we will be using the <a href="https://github.com/stevehodgkiss/generator_spec">generator_spec</a> gem.  Let’s
-add it to our <code>.gemspec</code>.  Bundle install.</p>
+add it to our <code class="highlighter-rouge">.gemspec</code>.  Bundle install.</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># double_double.gemspec</span>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># double_double.gemspec</span>
 
-<span class="no">Gem</span><span class="o">::</span><span class="no">Specification</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">gem</span><span class="o">|</span>
+<span class="no">Gem</span><span class="o">::</span><span class="no">Specification</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">gem</span><span class="o">|</span>
   <span class="c1"># ...</span>
-  <span class="n">gem</span><span class="o">.</span><span class="n">add_development_dependency</span> <span class="s1">&#39;generator_spec&#39;</span>
-<span class="k">end</span></code></pre></div>
+  <span class="n">gem</span><span class="p">.</span><span class="nf">add_development_dependency</span> <span class="s1">'generator_spec'</span>
+<span class="k">end</span></code></pre></figure>
 
 <h3 id="our-test">Our test</h3>
 
 <p>The skeleton of our Rspec spec:</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># spec/lib/generators/double_double/install/install_generator_spec.rb</span>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># spec/lib/generators/double_double/install/install_generator_spec.rb</span>
 
-<span class="nb">require</span> <span class="s2">&quot;generator_spec&quot;</span>
+<span class="nb">require</span> <span class="s2">"generator_spec"</span>
 
 <span class="k">module</span> <span class="nn">DoubleDouble</span>
   <span class="k">module</span> <span class="nn">Generators</span>
     <span class="n">describe</span> <span class="no">InstallGenerator</span><span class="p">,</span> <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="ss">:generator</span> <span class="k">do</span>
 
-      <span class="n">root_dir</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;../../../../../../tmp&quot;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+      <span class="n">root_dir</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">expand_path</span><span class="p">(</span><span class="s2">"../../../../../../tmp"</span><span class="p">,</span> <span class="kp">__FILE__</span><span class="p">)</span>
       <span class="n">destination</span> <span class="n">root_dir</span>
 
       <span class="n">before</span> <span class="ss">:all</span> <span class="k">do</span>
@@ -237,22 +231,22 @@ add it to our <code>.gemspec</code>.  Bundle install.</p>
       <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
-<span class="k">end</span></code></pre></div>
+<span class="k">end</span></code></pre></figure>
 
 <p>Our most significant decision so far was deciding where to temporarily store
-the generated files and directories.  The <code>tmp</code> directory is an obvious choice.</p>
+the generated files and directories.  The <code class="highlighter-rouge">tmp</code> directory is an obvious choice.</p>
 
 <p>Let’s continue and add our test case.</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># spec/lib/generators/double_double/install/install_generator_spec.rb</span>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># spec/lib/generators/double_double/install/install_generator_spec.rb</span>
 
-<span class="nb">require</span> <span class="s2">&quot;generator_spec&quot;</span>
+<span class="nb">require</span> <span class="s2">"generator_spec"</span>
 
 <span class="k">module</span> <span class="nn">DoubleDouble</span>
   <span class="k">module</span> <span class="nn">Generators</span>
     <span class="n">describe</span> <span class="no">InstallGenerator</span><span class="p">,</span> <span class="ss">:type</span> <span class="o">=&gt;</span> <span class="ss">:generator</span> <span class="k">do</span>
 
-      <span class="n">root_dir</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;../../../../../../tmp&quot;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+      <span class="n">root_dir</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">expand_path</span><span class="p">(</span><span class="s2">"../../../../../../tmp"</span><span class="p">,</span> <span class="kp">__FILE__</span><span class="p">)</span>
       <span class="n">destination</span> <span class="n">root_dir</span>
 
       <span class="n">before</span> <span class="ss">:all</span> <span class="k">do</span>
@@ -260,16 +254,16 @@ the generated files and directories.  The <code>tmp</code> directory is an obvio
         <span class="n">run_generator</span>
       <span class="k">end</span>
 
-      <span class="n">it</span> <span class="s2">&quot;creates the installation db migration&quot;</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s2">"creates the installation db migration"</span> <span class="k">do</span>
         <span class="n">migration_file</span> <span class="o">=</span> 
-          <span class="no">Dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">root_dir</span><span class="si">}</span><span class="s2">/db/migrate/*create_double_double.rb&quot;</span><span class="p">)</span>
+          <span class="no">Dir</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">root_dir</span><span class="si">}</span><span class="s2">/db/migrate/*create_double_double.rb"</span><span class="p">)</span>
 
-        <span class="n">assert_file</span> <span class="n">migration_file</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">,</span> 
+        <span class="n">assert_file</span> <span class="n">migration_file</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
           <span class="sr">/class CreateDoubleDouble &lt; ActiveRecord::Migration/</span>
       <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
-<span class="k">end</span></code></pre></div>
+<span class="k">end</span></code></pre></figure>
 
 <p><strong>Now</strong> we have a test to code against.  This test will assert:</p>
 
@@ -284,42 +278,42 @@ the generated files and directories.  The <code>tmp</code> directory is an obvio
 
 <p>We wrote a proper database migration template.</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># lib/generators/double_double/install/templates/create_double_double.rb</span>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># lib/generators/double_double/install/templates/create_double_double.rb</span>
 
 <span class="k">class</span> <span class="nc">CreateDoubleDouble</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">change</span>
     <span class="c1"># ...</span>
   <span class="k">end</span>
-<span class="k">end</span></code></pre></div>
+<span class="k">end</span></code></pre></figure>
 
 <p>And to finish the task we added the actual Rails generator.</p>
 
-<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># lib/generators/double_double/install/install_generator.rb</span>
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># lib/generators/double_double/install/install_generator.rb</span>
 
-<span class="nb">require</span> <span class="s1">&#39;rails/generators&#39;</span>
-<span class="nb">require</span> <span class="s1">&#39;rails/generators/migration&#39;</span>
+<span class="nb">require</span> <span class="s1">'rails/generators'</span>
+<span class="nb">require</span> <span class="s1">'rails/generators/migration'</span>
 
 <span class="k">module</span> <span class="nn">DoubleDouble</span>
   <span class="k">module</span> <span class="nn">Generators</span>
     <span class="k">class</span> <span class="nc">InstallGenerator</span> <span class="o">&lt;</span> <span class="o">::</span><span class="no">Rails</span><span class="o">::</span><span class="no">Generators</span><span class="o">::</span><span class="no">Base</span>
       <span class="kp">include</span> <span class="no">Rails</span><span class="o">::</span><span class="no">Generators</span><span class="o">::</span><span class="no">Migration</span>
-      <span class="n">source_root</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../templates&#39;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
-      <span class="n">desc</span> <span class="s2">&quot;Add the migrations for DoubleDouble&quot;</span>
+      <span class="n">source_root</span> <span class="no">File</span><span class="p">.</span><span class="nf">expand_path</span><span class="p">(</span><span class="s1">'../templates'</span><span class="p">,</span> <span class="kp">__FILE__</span><span class="p">)</span>
+      <span class="n">desc</span> <span class="s2">"Add the migrations for DoubleDouble"</span>
 
       <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">next_migration_number</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="n">next_migration_number</span> <span class="o">=</span> <span class="n">current_migration_number</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="o">.</span><span class="n">next_migration_number</span><span class="p">(</span><span class="n">next_migration_number</span><span class="p">)</span>
+        <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span><span class="p">.</span><span class="nf">next_migration_number</span><span class="p">(</span><span class="n">next_migration_number</span><span class="p">)</span>
       <span class="k">end</span>
 
       <span class="k">def</span> <span class="nf">copy_migrations</span>
-        <span class="n">migration_template</span> <span class="s2">&quot;create_double_double.rb&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;db/migrate/create_double_double.rb&quot;</span>
+        <span class="n">migration_template</span> <span class="s2">"create_double_double.rb"</span><span class="p">,</span>
+          <span class="s2">"db/migrate/create_double_double.rb"</span>
       <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
-<span class="k">end</span></code></pre></div>
+<span class="k">end</span></code></pre></figure>
 
-<p>You may be asking: What’s the class method <code>next_migration_number</code>?</p>
+<p>You may be asking: What’s the class method <code class="highlighter-rouge">next_migration_number</code>?</p>
 
 <p>It determines the date and time string that will be prepended on the migration
 filename. <a href="https://github.com/rails/rails/blob/3e36db4406beea32772b1db1e9a16cc1e8aea14c/activerecord/lib/rails/generators/active_record/migration.rb">I found that exact method implementation in Rails</a>, itself.</p>
