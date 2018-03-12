@@ -4,13 +4,107 @@
 <generator uri="https://github.com/jekyll/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="http://crftr.com/feed.xml" />
 <link rel="alternate" type="text/html" href="http://crftr.com" />
-<updated>2017-07-27T15:59:32-07:00</updated>
+<updated>2018-03-12T12:17:45-07:00</updated>
 <id>http://crftr.com/</id>
 <author>
   <name>Mike Herrera</name>
   <uri>http://crftr.com/</uri>
   
 </author>
+
+
+<entry>
+  <title type="html"><![CDATA[Yes, Ruby 1.9 can support TLSv1.2!]]></title>
+  <link rel="alternate" type="text/html" href="http://crftr.com/yes-ruby-1-9-can-support-tls-1-2/" />
+  <id>http://crftr.com/yes-ruby-1-9-can-support-tls-1-2</id>
+  <published>2018-03-12T10:09:55-07:00</published>
+  <updated>2018-03-12T10:09:55-07:00</updated>
+  <author>
+    <name>Mike Herrera</name>
+    <uri>http://crftr.com</uri>
+    
+  </author>
+  <content type="html">
+    &lt;p&gt;Did you receive an email indicating that a critical service is deprecating support for TLSv1.0 or TLSv1.1? Even worse, is your app running ruby 1.9?&lt;/p&gt;
+
+&lt;p&gt;All hope is not lost! Let’s get you on TLSv1.2!&lt;/p&gt;
+
+&lt;h1 id=&quot;1-is-your-openssl-version-adequate&quot;&gt;1. Is your OpenSSL version, adequate?&lt;/h1&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh&lt;/span&gt;
+
+openssl version&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;If the system is running an OpenSSL version &amp;gt;= &lt;code class=&quot;highlighter-rouge&quot;&gt;1.0.1&lt;/code&gt; there is no immediate need to upgrade. &lt;strong&gt;&lt;a href=&quot;#2-rebuild-ruby&quot;&gt;Skip to the ruby section&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;If the system is running an OpenSSL version &amp;lt; &lt;code class=&quot;highlighter-rouge&quot;&gt;1.0.1&lt;/code&gt; then you need to upgrade OpenSSL to support TLSv1.2&lt;/p&gt;
+
+&lt;h2 id=&quot;upgrade-openssl&quot;&gt;Upgrade OpenSSL&lt;/h2&gt;
+
+&lt;p&gt;You now know that you must upgrade OpenSSL. &lt;em&gt;I take zero responsibility for knowing your environment, so please investigate your appropriate procedures.&lt;/em&gt; Here are a few options for popular systems:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Ubuntu 12.04 and newer&lt;/span&gt;
+sudo apt-get update
+sudo apt-get install --only-upgrade openssl libssl-dev
+
+&lt;span class=&quot;c&quot;&gt;# RedHat Enterprise v6 or CentOS&lt;/span&gt;
+sudo yum update openssl libcurl
+
+&lt;span class=&quot;c&quot;&gt;# OS X (using homebrew)&lt;/span&gt;
+brew update
+brew install openssl&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;2-rebuild-ruby&quot;&gt;2. Rebuild ruby&lt;/h1&gt;
+
+&lt;p&gt;I currently enjoy using &lt;a href=&quot;https://github.com/rbenv/rbenv&quot;&gt;rbenv&lt;/a&gt; to manage my local and server ruby installations. Check to ensure that your version of rbenv can install your desired ruby version&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh&lt;/span&gt;
+
+rbenv install -l&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;Are you ready for the big show?!&lt;/strong&gt; The following assumes that we’re attempting to build ruby version 1.9.2-p180.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# rbenv&lt;/span&gt;
+rbenv install --force --patch 1.9.2-p180 &amp;lt; &amp;lt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;curl -sSL https://gist.githubusercontent.com/crftr/7a8f8873fcb1469c1d02c572e00a13a9/raw/ee187756fbc855ec7447d1a476515a2c443260d1/openssl_tls_1.2.patch&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+rbenv rehash
+
+&lt;span class=&quot;c&quot;&gt;# for users of RVM&lt;/span&gt;
+rvm install 1.9.2-p180 --patch https://gist.githubusercontent.com/crftr/7a8f8873fcb1469c1d02c572e00a13a9/raw/ee187756fbc855ec7447d1a476515a2c443260d1/openssl_tls_1.2.patch&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;3-lets-test&quot;&gt;3. Let’s test!&lt;/h1&gt;
+
+&lt;p&gt;The following &lt;a href=&quot;https://curl.haxx.se&quot;&gt;curl&lt;/a&gt; command will return HTML and JavaScript if and only if the server can communicate over TLSv1.2&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh&lt;/span&gt;
+
+curl --tlsv1.2 https://www.google.com&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;For our ruby test we will use &lt;a href=&quot;https://github.com/jnunemaker/httparty&quot;&gt;HTTParty&lt;/a&gt;. It’s tried and true. If it’s available try the following in a ruby REPL of your choice&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;c1&quot;&gt;# IRB, the Rails console, or whatever is appropriate for your app&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'httparty'&lt;/span&gt;
+
+&lt;span class=&quot;no&quot;&gt;HTTParty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;'https://www.google.com'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;ss&quot;&gt;ssl_version: :TLSv1_2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;ss&quot;&gt;debug_output: &lt;/span&gt;&lt;span class=&quot;vg&quot;&gt;$stdout&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h1 id=&quot;final-notes&quot;&gt;Final notes&lt;/h1&gt;
+
+&lt;p&gt;Let’s be honest, ruby 1.9 is outdated. It is in your best interest to upgrade as soon as possible. But legacy apps exist in the wild. I hope that all critical applications eventually receive the attention and upgrades they deserve – but only do so after adequately planning the procedure. There’s no need to rush through an upgrade for the TLS support.&lt;/p&gt;
+
+&lt;p&gt;Happy hacking!&lt;/p&gt;
+
+
+    &lt;p&gt;&lt;a href=&quot;http://crftr.com/yes-ruby-1-9-can-support-tls-1-2/&quot;&gt;Yes, Ruby 1.9 can support TLSv1.2!&lt;/a&gt; was originally published by Mike Herrera at &lt;a href=&quot;http://crftr.com&quot;&gt;crftr.com&lt;/a&gt; on March 12, 2018.&lt;/p&gt;
+  </content>
+</entry>
 
 
 <entry>

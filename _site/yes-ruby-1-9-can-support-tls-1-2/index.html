@@ -1,0 +1,308 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>Yes, Ruby 1.9 can support TLSv1.2! &#8211; crftr.com</title>
+<meta name="description" content="Did you receive an email indicating that a critical service is deprecating support for TLSv1.0 or TLSv1.1? Even worse, is your app running ruby 1.9?
+
+">
+<meta name="keywords" content="tutorial, ruby, tls">
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="Yes, Ruby 1.9 can support TLSv1.2!">
+<meta name="twitter:description" content="Did you receive an email indicating that a critical service is deprecating support for TLSv1.0 or TLSv1.1? Even worse, is your app running ruby 1.9?
+
+">
+<meta name="twitter:site" content="@crftr">
+<meta name="twitter:creator" content="@crftr">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://crftr.com/images/default-thumb.png">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Yes, Ruby 1.9 can support TLSv1.2!">
+<meta property="og:description" content="Did you receive an email indicating that a critical service is deprecating support for TLSv1.0 or TLSv1.1? Even worse, is your app running ruby 1.9?
+
+">
+<meta property="og:url" content="http://crftr.com/yes-ruby-1-9-can-support-tls-1-2/">
+<meta property="og:site_name" content="crftr.com">
+
+<meta property="og:image" content="http://crftr.com/images/default-thumb.png">
+
+
+
+
+
+
+<link rel="canonical" href="http://crftr.com/yes-ruby-1-9-can-support-tls-1-2/">
+<link href="http://crftr.com/feed.xml" type="application/atom+xml" rel="alternate" title="crftr.com Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="http://crftr.com/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+	<script src="http://crftr.com/assets/js/vendor/html5shiv.min.js"></script>
+	<script src="http://crftr.com/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="http://crftr.com/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+<link href='//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700%7CPT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="http://crftr.com/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="http://crftr.com/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="http://crftr.com/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://crftr.com/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://crftr.com/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://crftr.com/images/apple-touch-icon-144x144-precomposed.png">
+
+</head>
+
+<body class="post">
+
+<!--[if lt IE 9]><div class="browser-upgrade alert alert-info">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div><![endif]-->
+
+<div class="navigation-wrapper">
+	<div class="site-name">
+		<a href="http://crftr.com/">crftr.com</a>
+	</div><!-- /.site-name -->
+	<div class="top-navigation">
+		<nav role="navigation" id="site-nav" class="nav">
+		    <ul>
+		        
+				    
+				    <li><a href="http://crftr.com/about/" >About</a></li>
+				
+				    
+				    <li><a href="http://crftr.com/posts/" >Posts</a></li>
+				
+		    </ul>
+		</nav>
+	</div><!-- /.top-navigation -->
+</div><!-- /.navigation-wrapper -->
+
+
+
+<div id="main" role="main">
+  <div class="article-author-side">
+    
+
+<div itemscope itemtype="http://schema.org/Person">
+
+
+	<img src="http://crftr.com/images/crftr.png" class="bio-photo" alt="Mike Herrera bio photo">
+
+
+  <h3 itemprop="name">Mike Herrera</h3>
+  <p>Web engineer, cyclist. More metal than your momma's kettle.</p>
+  
+  <a href="http://twitter.com/crftr" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+  
+  
+  <a href="http://linkedin.com/in/mikeherrera" class="author-social" target="_blank"><i class="fa fa-fw fa-linkedin-square"></i> LinkedIn</a>
+  
+  
+  
+  <a href="http://github.com/crftr" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+  <a href="http://stackoverflow.com/users/18213/crftr" class="author-social" target="_blank"><i class="fa fa-fw fa-stack-overflow"></i> Stackoverflow</a>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+
+  </div>
+  <article class="post">
+    <div class="headline-wrap">
+      
+        <h1><a href="http://crftr.com/yes-ruby-1-9-can-support-tls-1-2/" rel="bookmark" title="Yes, Ruby 1.9 can support TLSv1.2!">Yes, Ruby 1.9 can support TLSv1.2!</a></h1>
+      
+    </div><!--/ .headline-wrap -->
+    <div class="article-wrap">
+      <p>Did you receive an email indicating that a critical service is deprecating support for TLSv1.0 or TLSv1.1? Even worse, is your app running ruby 1.9?</p>
+
+<p>All hope is not lost! Let’s get you on TLSv1.2!</p>
+
+<h1 id="1-is-your-openssl-version-adequate">1. Is your OpenSSL version, adequate?</h1>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/sh</span>
+
+openssl version</code></pre></figure>
+
+<p>If the system is running an OpenSSL version &gt;= <code class="highlighter-rouge">1.0.1</code> there is no immediate need to upgrade. <strong><a href="#2-rebuild-ruby">Skip to the ruby section</a></strong></p>
+
+<p>If the system is running an OpenSSL version &lt; <code class="highlighter-rouge">1.0.1</code> then you need to upgrade OpenSSL to support TLSv1.2</p>
+
+<h2 id="upgrade-openssl">Upgrade OpenSSL</h2>
+
+<p>You now know that you must upgrade OpenSSL. <em>I take zero responsibility for knowing your environment, so please investigate your appropriate procedures.</em> Here are a few options for popular systems:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/sh</span>
+
+<span class="c"># Ubuntu 12.04 and newer</span>
+sudo apt-get update
+sudo apt-get install --only-upgrade openssl libssl-dev
+
+<span class="c"># RedHat Enterprise v6 or CentOS</span>
+sudo yum update openssl libcurl
+
+<span class="c"># OS X (using homebrew)</span>
+brew update
+brew install openssl</code></pre></figure>
+
+<h1 id="2-rebuild-ruby">2. Rebuild ruby</h1>
+
+<p>I currently enjoy using <a href="https://github.com/rbenv/rbenv">rbenv</a> to manage my local and server ruby installations. Check to ensure that your version of rbenv can install your desired ruby version</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/sh</span>
+
+rbenv install -l</code></pre></figure>
+
+<p><strong>Are you ready for the big show?!</strong> The following assumes that we’re attempting to build ruby version 1.9.2-p180.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/sh</span>
+
+<span class="c"># rbenv</span>
+rbenv install --force --patch 1.9.2-p180 &lt; &lt;<span class="o">(</span>curl -sSL https://gist.githubusercontent.com/crftr/7a8f8873fcb1469c1d02c572e00a13a9/raw/ee187756fbc855ec7447d1a476515a2c443260d1/openssl_tls_1.2.patch<span class="o">)</span>
+rbenv rehash
+
+<span class="c"># for users of RVM</span>
+rvm install 1.9.2-p180 --patch https://gist.githubusercontent.com/crftr/7a8f8873fcb1469c1d02c572e00a13a9/raw/ee187756fbc855ec7447d1a476515a2c443260d1/openssl_tls_1.2.patch</code></pre></figure>
+
+<h1 id="3-lets-test">3. Let’s test!</h1>
+
+<p>The following <a href="https://curl.haxx.se">curl</a> command will return HTML and JavaScript if and only if the server can communicate over TLSv1.2</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/sh</span>
+
+curl --tlsv1.2 https://www.google.com</code></pre></figure>
+
+<p>For our ruby test we will use <a href="https://github.com/jnunemaker/httparty">HTTParty</a>. It’s tried and true. If it’s available try the following in a ruby REPL of your choice</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="c1"># IRB, the Rails console, or whatever is appropriate for your app</span>
+
+<span class="nb">require</span> <span class="s1">'httparty'</span>
+
+<span class="no">HTTParty</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span>
+  <span class="s1">'https://www.google.com'</span><span class="p">,</span>
+  <span class="ss">ssl_version: :TLSv1_2</span><span class="p">,</span>
+  <span class="ss">debug_output: </span><span class="vg">$stdout</span>
+<span class="p">)</span></code></pre></figure>
+
+<h1 id="final-notes">Final notes</h1>
+
+<p>Let’s be honest, ruby 1.9 is outdated. It is in your best interest to upgrade as soon as possible. But legacy apps exist in the wild. I hope that all critical applications eventually receive the attention and upgrades they deserve – but only do so after adequately planning the procedure. There’s no need to rush through an upgrade for the TLS support.</p>
+
+<p>Happy hacking!</p>
+
+
+      <hr />
+      <footer role="contentinfo">
+        <div class="social-share">
+  <h4>Share on</h4>
+  <ul>
+    <li>
+      <a href="https://twitter.com/intent/tweet?text=http://crftr.com/yes-ruby-1-9-can-support-tls-1-2/" class="twitter" title="Share on Twitter"><i class="fa fa-twitter"></i><span> Twitter</span></a>
+    </li>
+    <li>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=http://crftr.com/yes-ruby-1-9-can-support-tls-1-2/" class="facebook" title="Share on Facebook"><i class="fa fa-facebook"></i><span> Facebook</span></a>
+    </li>
+    <li>
+      <a href="https://plus.google.com/share?url=http://crftr.com/yes-ruby-1-9-can-support-tls-1-2/" class="google-plus" title="Share on Google Plus"><i class="fa fa-google-plus"></i><span> Google+</span></a>
+    </li>
+  </ul>
+</div><!-- /.social-share -->
+        <p class="byline"><strong>Yes, Ruby 1.9 can support TLSv1.2!</strong> was published on <time datetime="2018-03-12T10:09:55-07:00">March 12, 2018</time>.</p>
+      </footer>
+    </div><!-- /.article-wrap -->
+  
+    <section id="disqus_thread"></section><!-- /#disqus_thread -->
+  
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrap">
+  
+  <footer>
+    
+
+<span>&copy; 2015-2018 Mike Herrera. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a> theme.</span>
+
+  </footer>
+</div><!-- /.footer-wrap -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="http://crftr.com/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="http://crftr.com/assets/js/scripts.min.js"></script>
+
+<!-- Asynchronous Google Analytics snippet -->
+<script>
+  var _gaq = _gaq || [];
+  var pluginUrl = 
+ '//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+  _gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+  _gaq.push(['_setAccount', 'UA-63694157-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'crftr'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+	        
+
+</body>
+</html>
