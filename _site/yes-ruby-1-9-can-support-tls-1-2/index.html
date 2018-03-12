@@ -150,13 +150,19 @@
 
 <p>All hope is not lost! Let’s get you on TLSv1.2!</p>
 
-<h1 id="1-is-your-openssl-version-adequate">1. Is your OpenSSL version, adequate?</h1>
+<h1 id="background">Background</h1>
+
+<p>Ruby 1.9.0 was first released on Christmas of 2007. Support for the 1.9 branch ended on February 23, 2015. <em>It had a good run.</em></p>
+
+<p>The 1.9 branch supported SSLv2, SSLv2.3, SSLv3 and TLSv1. <em>Perfectly acceptable for the time.</em> But 1.9 apps still exist, and the world of services around them are changing for PCI compliance and other valid security concerns.</p>
+
+<h1 id="is-your-openssl-version-adequate">Is your OpenSSL version, adequate?</h1>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/sh</span>
 
 openssl version</code></pre></figure>
 
-<p>If the system is running an OpenSSL version &gt;= <code class="highlighter-rouge">1.0.1</code> there is no immediate need to upgrade. <strong><a href="#2-rebuild-ruby">Skip to the ruby section</a></strong></p>
+<p>If the system is running an OpenSSL version &gt;= <code class="highlighter-rouge">1.0.1</code> there is no immediate need to upgrade. <strong><a href="#rebuild-ruby">Skip to the ruby section</a></strong></p>
 
 <p>If the system is running an OpenSSL version &lt; <code class="highlighter-rouge">1.0.1</code> then you need to upgrade OpenSSL to support TLSv1.2</p>
 
@@ -177,7 +183,7 @@ sudo yum update openssl libcurl
 brew update
 brew install openssl</code></pre></figure>
 
-<h1 id="2-rebuild-ruby">2. Rebuild ruby</h1>
+<h1 id="rebuild-ruby">Rebuild ruby</h1>
 
 <p>I currently enjoy using <a href="https://github.com/rbenv/rbenv">rbenv</a> to manage my local and server ruby installations. Check to ensure that your version of rbenv can install your desired ruby version</p>
 
@@ -196,7 +202,7 @@ rbenv rehash
 <span class="c"># for users of RVM</span>
 rvm install 1.9.2-p180 --patch https://gist.githubusercontent.com/crftr/7a8f8873fcb1469c1d02c572e00a13a9/raw/ee187756fbc855ec7447d1a476515a2c443260d1/openssl_tls_1.2.patch</code></pre></figure>
 
-<h1 id="3-lets-test">3. Let’s test!</h1>
+<h1 id="lets-test">Let’s test!</h1>
 
 <p>The following <a href="https://curl.haxx.se">curl</a> command will return HTML and JavaScript if and only if the server can communicate over TLSv1.2</p>
 
@@ -218,7 +224,7 @@ curl --tlsv1.2 https://www.google.com</code></pre></figure>
 
 <h1 id="final-notes">Final notes</h1>
 
-<p>Let’s be honest, ruby 1.9 is outdated. It is in your best interest to upgrade as soon as possible. But legacy apps exist in the wild. I hope that all critical applications eventually receive the attention and upgrades they deserve – but only do so after adequately planning the procedure. There’s no need to rush through an upgrade for the TLS support.</p>
+<p>Let’s be honest, running ruby 1.9 is risky. It is in your best interest to upgrade as soon as possible. But legacy apps exist in the wild. I hope that all critical applications eventually receive the attention and upgrades they deserve – but only do so after adequately planning the procedure. There’s no need to rush through an upgrade for the TLS support.</p>
 
 <p>Happy hacking!</p>
 

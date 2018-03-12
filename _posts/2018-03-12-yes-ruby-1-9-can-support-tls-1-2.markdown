@@ -13,8 +13,14 @@ Did you receive an email indicating that a critical service is deprecating suppo
 
 All hope is not lost! Let's get you on TLSv1.2!
 
+# Background
 
-# 1. Is your OpenSSL version, adequate?
+Ruby 1.9.0 was first released on Christmas of 2007. Support for the 1.9 branch ended on February 23, 2015. *It had a good run.*
+
+The 1.9 branch supported SSLv2, SSLv2.3, SSLv3 and TLSv1. *Perfectly acceptable for the time.* But 1.9 apps still exist, and the world of services around them are changing for PCI compliance and other valid security concerns.
+
+
+# Is your OpenSSL version, adequate?
 
 {% highlight bash %}
 #!/bin/sh
@@ -22,7 +28,7 @@ All hope is not lost! Let's get you on TLSv1.2!
 openssl version
 {% endhighlight %}
 
-If the system is running an OpenSSL version >= `1.0.1` there is no immediate need to upgrade. **[Skip to the ruby section](#2-rebuild-ruby)**
+If the system is running an OpenSSL version >= `1.0.1` there is no immediate need to upgrade. **[Skip to the ruby section](#rebuild-ruby)**
 
 If the system is running an OpenSSL version < `1.0.1` then you need to upgrade OpenSSL to support TLSv1.2
 
@@ -49,7 +55,7 @@ brew install openssl
 
 
 
-# 2. Rebuild ruby
+# Rebuild ruby
 
 I currently enjoy using [rbenv][3] to manage my local and server ruby installations. Check to ensure that your version of rbenv can install your desired ruby version
 
@@ -75,7 +81,7 @@ rvm install 1.9.2-p180 --patch https://gist.githubusercontent.com/crftr/7a8f8873
 
 
 
-# 3. Let's test!
+# Let's test!
 
 The following [curl][1] command will return HTML and JavaScript if and only if the server can communicate over TLSv1.2
 
@@ -102,7 +108,7 @@ HTTParty.get(
 
 # Final notes
 
-Let's be honest, ruby 1.9 is outdated. It is in your best interest to upgrade as soon as possible. But legacy apps exist in the wild. I hope that all critical applications eventually receive the attention and upgrades they deserve -- but only do so after adequately planning the procedure. There's no need to rush through an upgrade for the TLS support.
+Let's be honest, running ruby 1.9 is risky. It is in your best interest to upgrade as soon as possible. But legacy apps exist in the wild. I hope that all critical applications eventually receive the attention and upgrades they deserve -- but only do so after adequately planning the procedure. There's no need to rush through an upgrade for the TLS support.
 
 Happy hacking!
 

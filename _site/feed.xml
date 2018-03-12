@@ -4,7 +4,7 @@
 <generator uri="https://github.com/jekyll/jekyll">Jekyll</generator>
 <link rel="self" type="application/atom+xml" href="http://crftr.com/feed.xml" />
 <link rel="alternate" type="text/html" href="http://crftr.com" />
-<updated>2018-03-12T12:17:45-07:00</updated>
+<updated>2018-03-12T16:42:55-07:00</updated>
 <id>http://crftr.com/</id>
 <author>
   <name>Mike Herrera</name>
@@ -29,13 +29,19 @@
 
 &lt;p&gt;All hope is not lost! Let’s get you on TLSv1.2!&lt;/p&gt;
 
-&lt;h1 id=&quot;1-is-your-openssl-version-adequate&quot;&gt;1. Is your OpenSSL version, adequate?&lt;/h1&gt;
+&lt;h1 id=&quot;background&quot;&gt;Background&lt;/h1&gt;
+
+&lt;p&gt;Ruby 1.9.0 was first released on Christmas of 2007. Support for the 1.9 branch ended on February 23, 2015. &lt;em&gt;It had a good run.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;The 1.9 branch supported SSLv2, SSLv2.3, SSLv3 and TLSv1. &lt;em&gt;Perfectly acceptable for the time.&lt;/em&gt; But 1.9 apps still exist, and the world of services around them are changing for PCI compliance and other valid security concerns.&lt;/p&gt;
+
+&lt;h1 id=&quot;is-your-openssl-version-adequate&quot;&gt;Is your OpenSSL version, adequate?&lt;/h1&gt;
 
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/sh&lt;/span&gt;
 
 openssl version&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;p&gt;If the system is running an OpenSSL version &amp;gt;= &lt;code class=&quot;highlighter-rouge&quot;&gt;1.0.1&lt;/code&gt; there is no immediate need to upgrade. &lt;strong&gt;&lt;a href=&quot;#2-rebuild-ruby&quot;&gt;Skip to the ruby section&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If the system is running an OpenSSL version &amp;gt;= &lt;code class=&quot;highlighter-rouge&quot;&gt;1.0.1&lt;/code&gt; there is no immediate need to upgrade. &lt;strong&gt;&lt;a href=&quot;#rebuild-ruby&quot;&gt;Skip to the ruby section&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;If the system is running an OpenSSL version &amp;lt; &lt;code class=&quot;highlighter-rouge&quot;&gt;1.0.1&lt;/code&gt; then you need to upgrade OpenSSL to support TLSv1.2&lt;/p&gt;
 
@@ -56,7 +62,7 @@ sudo yum update openssl libcurl
 brew update
 brew install openssl&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;h1 id=&quot;2-rebuild-ruby&quot;&gt;2. Rebuild ruby&lt;/h1&gt;
+&lt;h1 id=&quot;rebuild-ruby&quot;&gt;Rebuild ruby&lt;/h1&gt;
 
 &lt;p&gt;I currently enjoy using &lt;a href=&quot;https://github.com/rbenv/rbenv&quot;&gt;rbenv&lt;/a&gt; to manage my local and server ruby installations. Check to ensure that your version of rbenv can install your desired ruby version&lt;/p&gt;
 
@@ -75,7 +81,7 @@ rbenv rehash
 &lt;span class=&quot;c&quot;&gt;# for users of RVM&lt;/span&gt;
 rvm install 1.9.2-p180 --patch https://gist.githubusercontent.com/crftr/7a8f8873fcb1469c1d02c572e00a13a9/raw/ee187756fbc855ec7447d1a476515a2c443260d1/openssl_tls_1.2.patch&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;h1 id=&quot;3-lets-test&quot;&gt;3. Let’s test!&lt;/h1&gt;
+&lt;h1 id=&quot;lets-test&quot;&gt;Let’s test!&lt;/h1&gt;
 
 &lt;p&gt;The following &lt;a href=&quot;https://curl.haxx.se&quot;&gt;curl&lt;/a&gt; command will return HTML and JavaScript if and only if the server can communicate over TLSv1.2&lt;/p&gt;
 
@@ -97,7 +103,7 @@ curl --tlsv1.2 https://www.google.com&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
 &lt;h1 id=&quot;final-notes&quot;&gt;Final notes&lt;/h1&gt;
 
-&lt;p&gt;Let’s be honest, ruby 1.9 is outdated. It is in your best interest to upgrade as soon as possible. But legacy apps exist in the wild. I hope that all critical applications eventually receive the attention and upgrades they deserve – but only do so after adequately planning the procedure. There’s no need to rush through an upgrade for the TLS support.&lt;/p&gt;
+&lt;p&gt;Let’s be honest, running ruby 1.9 is risky. It is in your best interest to upgrade as soon as possible. But legacy apps exist in the wild. I hope that all critical applications eventually receive the attention and upgrades they deserve – but only do so after adequately planning the procedure. There’s no need to rush through an upgrade for the TLS support.&lt;/p&gt;
 
 &lt;p&gt;Happy hacking!&lt;/p&gt;
 
